@@ -30,7 +30,7 @@
    LABEL is an optional keyword; defaults to :BLOCK<id>."
   (let* ((id  (mirf-block-counter fn))
          (lbl (or label (intern (format nil "BLOCK~D" id) :keyword)))
-         (blk (make-mir-block :id id :label lbl)))
+         (blk (make-mir-block :id id :label lbl :owner fn)))
     (incf (mirf-block-counter fn))
     ;; Prepend; caller can reverse for RPO order later.
     (push blk (mirf-blocks fn))
@@ -63,7 +63,7 @@
              ;; Phi placeholder (dst must be provided by caller)
              ((eq op :phi) dst)
              ;; Otherwise nil (caller should pass dst or use return value)
-             (t dst)))
+             (t (mir-new-value (mirb-owner block) :type type))))
          (inst (make-mir-inst :op op :dst actual-dst :srcs srcs
                               :type type :block block :meta meta)))
     (when actual-dst

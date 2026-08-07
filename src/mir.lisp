@@ -64,6 +64,7 @@
    (Braun et al. 2013 incremental SSA construction)."
   (id   0   :type fixnum)      ; unique ID within function
   (label nil)                  ; keyword label (e.g. :block0, :then, :loop-header)
+  (owner nil)                  ; owning mir-function for SSA value allocation
   (insts nil :type list)       ; ordered list of mir-inst (phi nodes NOT included here)
   (preds nil :type list)       ; predecessor mir-blocks
   (succs nil :type list)       ; successor mir-blocks
