@@ -14,7 +14,8 @@
   :serial t
   :components
   ((:file "target-package")
-   (:file "target")))
+   (:file "target"))
+  :in-order-to ((test-op (test-op "cl-cc-target/test"))))
 
 (asdf:defsystem "cl-cc-target/test"
   :description "Module boundary tests for cl-cc-target"

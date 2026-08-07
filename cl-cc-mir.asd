@@ -26,7 +26,8 @@
   ((:file "package")
    (:file "mir")
    (:file "mir-builder")
-   (:file "mir-analysis")))
+   (:file "mir-analysis"))
+  :in-order-to ((test-op (test-op "cl-cc-mir/test"))))
 
 (asdf:defsystem "cl-cc-mir/test"
   :description "Module boundary tests for cl-cc-mir"
@@ -39,4 +40,4 @@
                (:file "mir-boundary-test"))
   :perform (asdf:test-op (op system)
              (declare (ignore op system))
-             (uiop:symbol-call :cl-weave :run-all-tests :pass-with-no-tests nil)))
+             (uiop:symbol-call :cl-weave :run-all :pass-with-no-tests nil)))
