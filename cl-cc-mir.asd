@@ -39,5 +39,17 @@
   :components ((:file "package")
                (:file "mir-boundary-test"))
   :perform (asdf:test-op (op system)
-             (declare (ignore op system))
-             (uiop:symbol-call :cl-weave :run-all :pass-with-no-tests nil)))
+             (declare (ignore op))
+             (let ((results
+       (uiop:symbol-call
+        :cl-weave
+        :run
+        nil
+        :reporter :spec
+        :location-filter
+        (list
+         (asdf:component-pathname
+          (asdf:find-component system "mir-boundary-test"))))))
+  (unless (and results
+               (uiop:symbol-call :cl-weave :results-status results))
+    (error "cl-cc-mir test suite failed.")))))
