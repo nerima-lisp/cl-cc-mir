@@ -27,4 +27,4 @@
                (:file "target-boundary-test"))
   :perform (asdf:test-op (op system)
              (declare (ignore op system))
-             (uiop:symbol-call :cl-weave :run-all-tests :pass-with-no-tests nil)))
+             (uiop:symbol-call :cl-weave :run-all :pass-with-no-tests nil)))
