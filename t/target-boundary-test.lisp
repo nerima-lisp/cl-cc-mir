@@ -42,3 +42,18 @@
       (expect (member (cdr pair)
                       (cl-cc/target:target-features (cl-cc/target:find-target (car pair))))
               :to-be-truthy))))
+(describe-sequential "ASDF entry points"
+  (it "loads MIR and target from the same checkout"
+    (asdf:load-system "cl-cc-mir")
+    (asdf:load-system "cl-cc-target")
+    (expect
+      (equal
+        (namestring
+          (truename
+            (asdf:system-source-directory
+              (asdf:find-system "cl-cc-mir"))))
+        (namestring
+          (truename
+            (asdf:system-source-directory
+              (asdf:find-system "cl-cc-target")))))
+      :to-be-truthy)))

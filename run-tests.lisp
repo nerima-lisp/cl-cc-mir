@@ -35,6 +35,6 @@
 
 (let ((root (script-directory)))
   (configure-local-source-registry root)
-  (asdf:test-system "cl-cc-mir")
   (asdf:test-system "cl-cc-target")
+  (asdf:test-system "cl-cc-mir")
   (uiop:quit 0))

@@ -14,7 +14,8 @@
   :serial t
   :components
   ((:file "target-package")
-   (:file "target")))
+   (:file "target"))
+  :in-order-to ((test-op (test-op "cl-cc-target/test"))))
 
 (asdf:defsystem "cl-cc-target/test"
   :description "Module boundary tests for cl-cc-target"
@@ -26,5 +27,17 @@
   :components ((:file "target-package")
                (:file "target-boundary-test"))
   :perform (asdf:test-op (op system)
-             (declare (ignore op system))
-             (uiop:symbol-call :cl-weave :run-all-tests :pass-with-no-tests nil)))
+             (declare (ignore op))
+             (let ((results
+       (uiop:symbol-call
+        :cl-weave
+        :run
+        nil
+        :reporter :spec
+        :location-filter
+        (list
+         (asdf:component-pathname
+          (asdf:find-component system "target-boundary-test"))))))
+  (unless (and results
+               (uiop:symbol-call :cl-weave :results-status results))
+    (error "cl-cc-target test suite failed.")))))
