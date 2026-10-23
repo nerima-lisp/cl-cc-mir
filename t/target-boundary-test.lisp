@@ -44,16 +44,44 @@
               :to-be-truthy))))
 (describe-sequential "ASDF entry points"
   (it "loads MIR and target from the same checkout"
-    (asdf:load-system "cl-cc-mir")
-    (asdf:load-system "cl-cc-target")
-    (expect
-      (equal
-        (namestring
-          (truename
-            (asdf:system-source-directory
-              (asdf:find-system "cl-cc-mir"))))
-        (namestring
-          (truename
-            (asdf:system-source-directory
-              (asdf:find-system "cl-cc-target")))))
-      :to-be-truthy)))
+    (let* ((expected-source-directory
+             (namestring
+              (truename
+               (asdf:system-source-directory
+                (asdf:find-system "cl-cc-target")))))
+           (child-form
+             (format nil
+                     "(progn
+                        (asdf:load-system \"cl-cc-mir\")
+                        (asdf:load-system \"cl-cc-target\")
+                        (let ((mir-source-directory
+                                (namestring
+                                 (truename
+                                  (asdf:system-source-directory
+                                   (asdf:find-system \"cl-cc-mir\")))))
+                              (target-source-directory
+                                (namestring
+                                 (truename
+                                  (asdf:system-source-directory
+                                   (asdf:find-system \"cl-cc-target\"))))))
+                          (assert (string= mir-source-directory target-source-directory))
+                          (assert (string= mir-source-directory ~s))))"
+                     expected-source-directory)))
+      (multiple-value-bind (stdout stderr exit-code)
+          (uiop:run-program
+           (list "sbcl"
+                 "--noinform"
+                 "--non-interactive"
+                 "--eval"
+                 "(require :asdf)"
+                 "--eval"
+                 child-form)
+           :output :string
+           :error-output :string
+           :ignore-error-status t
+           :directory expected-source-directory)
+        (expect exit-code :to-be 0)
+        (expect
+          (not (or (search "Deprecated recursive use" (or stdout ""))
+                   (search "Deprecated recursive use" (or stderr ""))))
+          :to-be-truthy)))))

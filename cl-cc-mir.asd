@@ -27,7 +27,26 @@
    (:file "mir")
    (:file "mir-builder")
    (:file "mir-analysis"))
-  :in-order-to ((test-op (test-op "cl-cc-mir/test"))))
+  :in-order-to ((asdf:test-op (asdf:load-op "cl-cc-mir/test")))
+  :perform (asdf:test-op (op system)
+             (declare (ignore op system))
+             (let ((results
+                    (uiop:symbol-call
+                     :cl-weave
+                     :run
+                     nil
+                     :reporter :spec
+                     :location-filter
+                     (labels ((source-component-pathnames (component)
+                                (if (typep component 'asdf:source-file)
+                                    (list (asdf:component-pathname component))
+                                    (mapcan (lambda (child)
+                                              (source-component-pathnames child))
+                                            (asdf:component-children component)))))
+                       (source-component-pathnames (asdf:find-system "cl-cc-mir/test"))))))
+               (unless (and results
+                            (uiop:symbol-call :cl-weave :results-status results))
+                 (error "cl-cc-mir test suite failed.")))))
 
 (asdf:defsystem "cl-cc-mir/test"
   :description "Module boundary tests for cl-cc-mir"
@@ -47,9 +66,13 @@
         nil
         :reporter :spec
         :location-filter
-        (list
-         (asdf:component-pathname
-          (asdf:find-component system "mir-boundary-test"))))))
+        (labels ((source-component-pathnames (component)
+                   (if (typep component 'asdf:source-file)
+                       (list (asdf:component-pathname component))
+                       (mapcan (lambda (child)
+                                 (source-component-pathnames child))
+                               (asdf:component-children component)))))
+          (source-component-pathnames system)))))
   (unless (and results
                (uiop:symbol-call :cl-weave :results-status results))
     (error "cl-cc-mir test suite failed.")))))

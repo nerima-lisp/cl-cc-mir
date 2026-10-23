@@ -15,7 +15,26 @@
   :components
   ((:file "target-package")
    (:file "target"))
-  :in-order-to ((test-op (test-op "cl-cc-target/test"))))
+  :in-order-to ((asdf:test-op (asdf:load-op "cl-cc-target/test")))
+  :perform (asdf:test-op (op system)
+             (declare (ignore op system))
+             (let ((results
+                    (uiop:symbol-call
+                     :cl-weave
+                     :run
+                     nil
+                     :reporter :spec
+                     :location-filter
+                     (labels ((source-component-pathnames (component)
+                                (if (typep component 'asdf:source-file)
+                                    (list (asdf:component-pathname component))
+                                    (mapcan (lambda (child)
+                                              (source-component-pathnames child))
+                                            (asdf:component-children component)))))
+                       (source-component-pathnames (asdf:find-system "cl-cc-target/test"))))))
+               (unless (and results
+                            (uiop:symbol-call :cl-weave :results-status results))
+                 (error "cl-cc-target test suite failed.")))))
 
 (asdf:defsystem "cl-cc-target/test"
   :description "Module boundary tests for cl-cc-target"
@@ -35,9 +54,13 @@
         nil
         :reporter :spec
         :location-filter
-        (list
-         (asdf:component-pathname
-          (asdf:find-component system "target-boundary-test"))))))
+        (labels ((source-component-pathnames (component)
+                   (if (typep component 'asdf:source-file)
+                       (list (asdf:component-pathname component))
+                       (mapcan (lambda (child)
+                                 (source-component-pathnames child))
+                               (asdf:component-children component)))))
+          (source-component-pathnames system)))))
   (unless (and results
                (uiop:symbol-call :cl-weave :results-status results))
     (error "cl-cc-target test suite failed.")))))

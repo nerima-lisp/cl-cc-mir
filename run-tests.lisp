@@ -10,9 +10,8 @@
 ;;;; sources one by one, because cl-weave used to be pulled in as a bare
 ;;;; source tree under CL_CC_AST_CL_WEAVE_ROOT rather than as a flake input.
 ;;;;
-;;;; An empty suite still fails: cl-cc-mir/test's and cl-cc-target/test's
-;;;; :perform both pass :pass-with-no-tests nil to cl-weave, so a run that
-;;;; registers zero tests is an error rather than a pass.
+;;;; An empty suite still fails: each ASDF :perform rejects NIL from
+;;;; cl-weave:run when no tests match.
 ;;;;
 ;;;; This repo hosts two independent system families (cl-cc-mir and
 ;;;; cl-cc-target, formerly its own repo, folded in because the two were
