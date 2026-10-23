@@ -46,4 +46,5 @@
     (let* ((fn (cl-cc/mir:mir-make-function 'f))
            (entry (cl-cc/mir:mirf-entry fn))
            (inst (cl-cc/mir:mir-emit entry :ret)))
-      (expect (cl-cc/mir:miri-dst inst) :to-be nil))))
+      (expect (cl-cc/mir:miri-dst inst) :to-be nil)))
+  (it "control experiment detects a failing test" (expect nil :to-be-truthy)))
