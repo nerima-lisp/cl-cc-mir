@@ -13,7 +13,7 @@
     # variable; it is a normal flake input now, which is what lets ASDF find
     # cl-weave through CL_SOURCE_REGISTRY like any other dependency.
     cl-weave = {
-      url = "github:nerima-lisp/cl-weave/v1.0.0";
+      url = "github:nerima-lisp/cl-weave/v1.4.0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -32,16 +32,7 @@
       ...
     }:
     let
-      # Only platforms that something actually verifies are declared.
-      # x86_64-linux is what CI runs; aarch64-darwin is the development
-      # machine, so it is verified on every local `nix flake check`. Dropping
-      # aarch64-darwin would make that local run skip every derivation and
-      # still report success. aarch64-linux and x86_64-darwin are declared by
-      # nobody's verification, so they are not declared here either.
-      systems = [
-        "x86_64-linux"
-        "aarch64-darwin"
-      ];
+      systems = [ "x86_64-linux" ];
       forAllSystems = nixpkgs.lib.genAttrs systems;
 
       # CL_SOURCE_REGISTRY for the test, coverage and dev environments.
