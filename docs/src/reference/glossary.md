@@ -6,7 +6,6 @@
 - Package: `cl-cc/mir/ir`
 - Key types: `mir-value`, `mir-const`, `mir-inst`, `mir-block`, `mir-function`, `mir-module`
 - Key functions: `mir-make-function`, `mir-new-block`, `mir-emit`, `mir-rpo`, `mir-dominators`, `mir-propagate-types`
-- Other contexts: None.
 
 ## target
 
@@ -14,4 +13,3 @@
 - Package: `cl-cc/mir/target`
 - Key types: `target-desc`
 - Key functions: `make-target-desc`, `register-target`, `find-target`, `target-allocatable-regs`
-- Other contexts: None.
