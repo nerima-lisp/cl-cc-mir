@@ -1,4 +1,4 @@
-;;;; t/mir-boundary-test.lisp — module boundary tests for cl-cc-mir
+;;;; t/ir/mir-boundary-test.lisp — module boundary tests for cl-cc-mir
 ;;;;
 ;;;; cl-cc's own suite covers MIR behaviour against this system. What is pinned
 ;;;; here is the property the extraction rests on -- a pure :cl leaf -- and the

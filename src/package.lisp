@@ -1,4 +1,4 @@
-;;;; packages/mir/src/package.lisp — cl-cc/mir package definition
+;;;; src/package.lisp — cl-cc/mir compatibility facade
 ;;;;
 ;;;; Machine IR: register-level SSA CFG intermediate representation.
 ;;;; Includes mir-value, mir-const, mir-inst, mir-block, mir-function,
@@ -10,36 +10,185 @@
 
 (defpackage :cl-cc/mir
   (:use :cl)
+  (:import-from :cl-cc/mir/ir
+    #:*MIR-EFFECT-KIND-TABLE*
+    #:*MIR-GENERIC-OPS*
+    #:MAKE-MIR-BLOCK
+    #:MAKE-MIR-CONST
+    #:MAKE-MIR-FUNCTION
+    #:MAKE-MIR-INST
+    #:MAKE-MIR-MODULE
+    #:MAKE-MIR-STACK-MAP
+    #:MAKE-MIR-STACK-MAP-ENTRY
+    #:MAKE-MIR-VALUE
+    #:MIR-ADD-PRED
+    #:MIR-ADD-SUCC
+    #:MIR-BLOCK
+    #:MIR-BLOCK-P
+    #:MIR-COMPUTE-GC-ROOTS
+    #:MIR-CONST
+    #:MIR-CONST-P
+    #:MIR-DOMINATORS
+    #:MIR-EMIT
+    #:MIR-FORMAT-VALUE
+    #:MIR-FUNCTION
+    #:MIR-FUNCTION-P
+    #:MIR-INFER-INST-TYPE
+    #:MIR-INST
+    #:MIR-INST-DCE-ELIGIBLE-P
+    #:MIR-INST-EFFECT-KIND
+    #:MIR-INST-P
+    #:MIR-INST-PURE-P
+    #:MIR-JOIN-TYPES
+    #:MIR-MAKE-FUNCTION
+    #:MIR-MODULE
+    #:MIR-MODULE-P
+    #:MIR-NEW-BLOCK
+    #:MIR-NEW-VALUE
+    #:MIR-OP-EFFECT-KIND
+    #:MIR-OPERAND-TYPE
+    #:MIR-PRINT-BLOCK
+    #:MIR-PRINT-FUNCTION
+    #:MIR-PRINT-INST
+    #:MIR-PROPAGATE-INST-TYPE
+    #:MIR-PROPAGATE-TYPES
+    #:MIR-READ-VAR
+    #:MIR-RPO
+    #:MIR-SAFEPOINT-STACK-MAP
+    #:MIR-SEAL-BLOCK
+    #:MIR-STACK-MAP
+    #:MIR-STACK-MAP-ENTRY
+    #:MIR-STACK-MAP-ENTRY-P
+    #:MIR-STACK-MAP-P
+    #:MIR-VALUE
+    #:MIR-VALUE-P
+    #:MIR-WRITE-VAR
+    #:MIRB-ID
+    #:MIRB-INCOMPLETE-PHIS
+    #:MIRB-INSTS
+    #:MIRB-LABEL
+    #:MIRB-PHIS
+    #:MIRB-PREDS
+    #:MIRB-SEALED-P
+    #:MIRB-SUCCS
+    #:MIRC-TYPE
+    #:MIRC-VALUE
+    #:MIRF-BLOCK-COUNTER
+    #:MIRF-BLOCKS
+    #:MIRF-CURRENT-DEFS
+    #:MIRF-ENTRY
+    #:MIRF-NAME
+    #:MIRF-PARAMS
+    #:MIRF-VALUE-COUNTER
+    #:MIRI-BLOCK
+    #:MIRI-DST
+    #:MIRI-META
+    #:MIRI-OP
+    #:MIRI-SRCS
+    #:MIRI-TYPE
+    #:MIRM-FUNCTIONS
+    #:MIRM-GLOBALS
+    #:MIRM-STRING-TABLE
+    #:MIRSM-ENTRIES
+    #:MIRSM-FRAME-SIZE
+    #:MIRSM-RETURN-ADDRESS
+    #:MIRSME-KIND
+    #:MIRSME-OFFSET
+    #:MIRSME-REG
+    #:MIRV-DEF-INST
+    #:MIRV-ID
+    #:MIRV-NAME
+    #:MIRV-TYPE
+    #:MIRV-USE-COUNT
+    #:%MIR-RPO-DFS)
   (:export
-   ;; mir.lisp — structs + accessors
-   #:mir-value #:make-mir-value #:mir-value-p
-   #:mirv-id #:mirv-name #:mirv-type #:mirv-def-inst #:mirv-use-count
-   #:mir-const #:make-mir-const #:mir-const-p
-   #:mirc-value #:mirc-type
-    #:mir-inst #:make-mir-inst #:mir-inst-p
-    #:miri-op #:miri-dst #:miri-srcs #:miri-type #:miri-block #:miri-meta
-    #:mir-stack-map-entry #:make-mir-stack-map-entry #:mir-stack-map-entry-p
-    #:mirsme-offset #:mirsme-kind #:mirsme-reg
-    #:mir-stack-map #:make-mir-stack-map #:mir-stack-map-p
-    #:mirsm-entries #:mirsm-frame-size #:mirsm-return-address
-    #:mir-safepoint-stack-map #:mir-compute-gc-roots
-   #:mir-block #:make-mir-block #:mir-block-p
-   #:mirb-id #:mirb-label #:mirb-insts #:mirb-preds #:mirb-succs
-   #:mirb-sealed-p #:mirb-phis #:mirb-incomplete-phis
-   #:mir-function #:make-mir-function #:mir-function-p
-   #:mirf-name #:mirf-params #:mirf-blocks #:mirf-entry
-   #:mirf-current-defs #:mirf-value-counter #:mirf-block-counter
-    #:mir-module #:make-mir-module #:mir-module-p
-    #:mirm-functions #:mirm-globals #:mirm-string-table
-    #:*mir-generic-ops*
-    #:*mir-effect-kind-table* #:mir-op-effect-kind #:mir-inst-effect-kind
-    #:mir-inst-pure-p #:mir-inst-dce-eligible-p
-    #:mir-operand-type #:mir-join-types #:mir-infer-inst-type
-    #:mir-propagate-inst-type #:mir-propagate-types
-    ;; mir-builder.lisp
-    #:mir-new-value #:mir-new-block #:mir-make-function
-   #:mir-emit #:mir-add-pred #:mir-add-succ
-   #:mir-write-var #:mir-read-var #:mir-seal-block
-   ;; mir-analysis.lisp
-   #:mir-rpo #:mir-dominators
-   #:mir-format-value #:mir-print-inst #:mir-print-block #:mir-print-function))
+    #:*MIR-EFFECT-KIND-TABLE*
+    #:*MIR-GENERIC-OPS*
+    #:MAKE-MIR-BLOCK
+    #:MAKE-MIR-CONST
+    #:MAKE-MIR-FUNCTION
+    #:MAKE-MIR-INST
+    #:MAKE-MIR-MODULE
+    #:MAKE-MIR-STACK-MAP
+    #:MAKE-MIR-STACK-MAP-ENTRY
+    #:MAKE-MIR-VALUE
+    #:MIR-ADD-PRED
+    #:MIR-ADD-SUCC
+    #:MIR-BLOCK
+    #:MIR-BLOCK-P
+    #:MIR-COMPUTE-GC-ROOTS
+    #:MIR-CONST
+    #:MIR-CONST-P
+    #:MIR-DOMINATORS
+    #:MIR-EMIT
+    #:MIR-FORMAT-VALUE
+    #:MIR-FUNCTION
+    #:MIR-FUNCTION-P
+    #:MIR-INFER-INST-TYPE
+    #:MIR-INST
+    #:MIR-INST-DCE-ELIGIBLE-P
+    #:MIR-INST-EFFECT-KIND
+    #:MIR-INST-P
+    #:MIR-INST-PURE-P
+    #:MIR-JOIN-TYPES
+    #:MIR-MAKE-FUNCTION
+    #:MIR-MODULE
+    #:MIR-MODULE-P
+    #:MIR-NEW-BLOCK
+    #:MIR-NEW-VALUE
+    #:MIR-OP-EFFECT-KIND
+    #:MIR-OPERAND-TYPE
+    #:MIR-PRINT-BLOCK
+    #:MIR-PRINT-FUNCTION
+    #:MIR-PRINT-INST
+    #:MIR-PROPAGATE-INST-TYPE
+    #:MIR-PROPAGATE-TYPES
+    #:MIR-READ-VAR
+    #:MIR-RPO
+    #:MIR-SAFEPOINT-STACK-MAP
+    #:MIR-SEAL-BLOCK
+    #:MIR-STACK-MAP
+    #:MIR-STACK-MAP-ENTRY
+    #:MIR-STACK-MAP-ENTRY-P
+    #:MIR-STACK-MAP-P
+    #:MIR-VALUE
+    #:MIR-VALUE-P
+    #:MIR-WRITE-VAR
+    #:MIRB-ID
+    #:MIRB-INCOMPLETE-PHIS
+    #:MIRB-INSTS
+    #:MIRB-LABEL
+    #:MIRB-PHIS
+    #:MIRB-PREDS
+    #:MIRB-SEALED-P
+    #:MIRB-SUCCS
+    #:MIRC-TYPE
+    #:MIRC-VALUE
+    #:MIRF-BLOCK-COUNTER
+    #:MIRF-BLOCKS
+    #:MIRF-CURRENT-DEFS
+    #:MIRF-ENTRY
+    #:MIRF-NAME
+    #:MIRF-PARAMS
+    #:MIRF-VALUE-COUNTER
+    #:MIRI-BLOCK
+    #:MIRI-DST
+    #:MIRI-META
+    #:MIRI-OP
+    #:MIRI-SRCS
+    #:MIRI-TYPE
+    #:MIRM-FUNCTIONS
+    #:MIRM-GLOBALS
+    #:MIRM-STRING-TABLE
+    #:MIRSM-ENTRIES
+    #:MIRSM-FRAME-SIZE
+    #:MIRSM-RETURN-ADDRESS
+    #:MIRSME-KIND
+    #:MIRSME-OFFSET
+    #:MIRSME-REG
+    #:MIRV-DEF-INST
+    #:MIRV-ID
+    #:MIRV-NAME
+    #:MIRV-TYPE
+    #:MIRV-USE-COUNT
+))

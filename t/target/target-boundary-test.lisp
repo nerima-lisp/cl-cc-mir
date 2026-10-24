@@ -1,4 +1,4 @@
-;;;; t/target-boundary-test.lisp — module boundary tests for cl-cc-target
+;;;; t/target/target-boundary-test.lisp — module boundary tests for cl-cc-target
 
 (in-package :cl-cc-target/test)
 

@@ -1,24 +1,72 @@
-;;;; src/target-package.lisp — feature package for cl-cc/target
+;;;; src/target-package.lisp — cl-cc/target compatibility facade
 ;;;;
-;;;; Phase 6 of package-by-feature migration. Houses target-desc and
-;;;; predefined target descriptors (x86-64, aarch64, riscv64, wasm32).
-;;;; Pure :cl leaf — no other cl-cc dependencies.
+;;;; The target domain package lives in cl-cc/mir/target.
 
 (defpackage :cl-cc/target
   (:use :cl)
+  (:import-from :cl-cc/mir/target
+    #:*AARCH64-TARGET*
+    #:*RISCV64-TARGET*
+    #:*TARGET-REGISTRY*
+    #:*WASM32-TARGET*
+    #:*X86-64-TARGET*
+    #:FIND-TARGET
+    #:MAKE-TARGET-DESC
+    #:REGISTER-TARGET
+    #:TARGET-64-BIT-P
+    #:TARGET-ALLOCATABLE-REGS
+    #:TARGET-ARG-REGS
+    #:TARGET-CALLEE-SAVED
+    #:TARGET-CALLER-SAVED
+    #:TARGET-DESC
+    #:TARGET-DESC-P
+    #:TARGET-ENDIANNESS
+    #:TARGET-FEATURES
+    #:TARGET-FP-ARG-REGS
+    #:TARGET-FP-RET-REG
+    #:TARGET-GPR-COUNT
+    #:TARGET-GPR-NAMES
+    #:TARGET-HAS-FEATURE-P
+    #:TARGET-LEGAL-OPS
+    #:TARGET-NAME
+    #:TARGET-OP-EXPAND
+    #:TARGET-OP-LEGAL-P
+    #:TARGET-REG-INDEX
+    #:TARGET-RET-REG
+    #:TARGET-SCRATCH-REGS
+    #:TARGET-STACK-ALIGNMENT
+    #:TARGET-WORD-SIZE
+)
   (:export
-   ;; target.lisp — struct + accessors
-   #:target-desc #:make-target-desc #:target-desc-p
-   #:target-name #:target-word-size #:target-endianness
-   #:target-gpr-count #:target-gpr-names
-   #:target-arg-regs #:target-ret-reg
-   #:target-fp-arg-regs #:target-fp-ret-reg
-   #:target-callee-saved #:target-scratch-regs
-   #:target-stack-alignment #:target-legal-ops #:target-features
-   ;; target.lisp — predefined descriptors
-   #:*x86-64-target* #:*aarch64-target* #:*riscv64-target* #:*wasm32-target*
-   #:*target-registry* #:register-target #:find-target
-   ;; target.lisp — utility functions
-   #:target-64-bit-p #:target-has-feature-p
-   #:target-allocatable-regs #:target-caller-saved
-   #:target-reg-index #:target-op-legal-p #:target-op-expand))
+    #:*AARCH64-TARGET*
+    #:*RISCV64-TARGET*
+    #:*TARGET-REGISTRY*
+    #:*WASM32-TARGET*
+    #:*X86-64-TARGET*
+    #:FIND-TARGET
+    #:MAKE-TARGET-DESC
+    #:REGISTER-TARGET
+    #:TARGET-64-BIT-P
+    #:TARGET-ALLOCATABLE-REGS
+    #:TARGET-ARG-REGS
+    #:TARGET-CALLEE-SAVED
+    #:TARGET-CALLER-SAVED
+    #:TARGET-DESC
+    #:TARGET-DESC-P
+    #:TARGET-ENDIANNESS
+    #:TARGET-FEATURES
+    #:TARGET-FP-ARG-REGS
+    #:TARGET-FP-RET-REG
+    #:TARGET-GPR-COUNT
+    #:TARGET-GPR-NAMES
+    #:TARGET-HAS-FEATURE-P
+    #:TARGET-LEGAL-OPS
+    #:TARGET-NAME
+    #:TARGET-OP-EXPAND
+    #:TARGET-OP-LEGAL-P
+    #:TARGET-REG-INDEX
+    #:TARGET-RET-REG
+    #:TARGET-SCRATCH-REGS
+    #:TARGET-STACK-ALIGNMENT
+    #:TARGET-WORD-SIZE
+))

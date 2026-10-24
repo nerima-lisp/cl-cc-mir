@@ -1,4 +1,4 @@
-;;;; packages/mir/src/target.lisp — Unified Target Descriptor
+;;;; src/target/target.lisp — Unified Target Description
 ;;;
 ;;; Replaces the ad-hoc calling-convention.lisp + scattered target state.
 ;;; One TARGET-DESC instance fully describes a compilation target:
@@ -15,7 +15,7 @@
 ;;;   *riscv64-target*  — RV64GC + RISC-V ELF psABI
 ;;;   *wasm32-target*   — WebAssembly Component Model + WASI 0.2
 
-(in-package :cl-cc/target)
+(in-package :cl-cc/mir/target)
 
 ;;;; ────────────────────────────────────────────────────────────────────────
 ;;;; Target Descriptor Struct

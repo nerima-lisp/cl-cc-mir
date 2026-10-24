@@ -17,6 +17,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    cl-nix-forge = {
+      url = "github:nerima-lisp/cl-nix-forge/v0.7.1";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     treefmt-nix = {
       url = "github:numtide/treefmt-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -28,6 +33,7 @@
       self,
       nixpkgs,
       cl-weave,
+      cl-nix-forge,
       treefmt-nix,
       ...
     }:
@@ -96,8 +102,43 @@
         system:
         let
           pkgs = nixpkgs.legacyPackages.${system};
+          cl = cl-nix-forge.lib.${system};
         in
         {
+          feature-lint = cl.mkFeatureLintCheck {
+            src = ./.;
+            featureDefinitions = "nix/feature-dependencies.sexp";
+            glossary = "docs/src/reference/glossary.md";
+            glossaryHeadingPrefix = "## ";
+            exportSurface = "t/export-surface.txt";
+            mode = "transition";
+            legacyInternalRefs = "t/legacy-internal-refs.sexp";
+            forbiddenNames = [
+              "phases"
+              "misc"
+              "utils"
+              "helpers"
+            ];
+            numberedPrefixes = [
+              "FR-"
+              "W"
+            ];
+            packagePrefix = "cl-cc/mir/";
+            infraSuffix = "/infra";
+          };
+
+          orphan-tests = cl.mkOrphanTestCheck {
+            src = ./.;
+            testRoots = [
+              "t/ir"
+              "t/target"
+            ];
+            testSystems = [
+              "cl-cc-mir/test"
+              "cl-cc-target/test"
+            ];
+          };
+
           default =
             pkgs.runCommand "cl-cc-mir-tests"
               {
@@ -111,93 +152,6 @@
                 export HOME="$TMPDIR/home"
                 mkdir -p "$HOME" "$out"
                 timeout 120 sbcl --script ${self}/run-tests.lisp
-                touch "$out/passed"
-              '';
-
-          orphan-tests =
-            pkgs.runCommand "cl-cc-mir-orphan-tests"
-              {
-                nativeBuildInputs = [
-                  pkgs.sbcl
-                  pkgs.coreutils
-                ];
-                CL_SOURCE_REGISTRY = sourceRegistry;
-              }
-              ''
-                export HOME="$TMPDIR/home"
-                mkdir -p "$HOME" "$out"
-                PROJECT_ROOT=${self} ${pkgs.sbcl}/bin/sbcl --noinform --script /dev/stdin <<'LISP'
-                (require :asdf)
-
-                (defun tree-files (directory)
-                  (append (uiop:directory-files directory)
-                          (mapcan #'tree-files
-                                  (remove-if
-                                   (lambda (subdirectory)
-                                     (member (pathname-name subdirectory)
-                                             '(".git" ".jj")
-                                             :test #'string=))
-                                   (uiop:subdirectories directory)))))
-
-                (defun test-lisp-file-p (pathname)
-                  (and (string-equal (or (pathname-type pathname) "") "lisp")
-                       (search "test" (or (pathname-name pathname) "")
-                               :test #'char-equal)))
-
-                (defun source-component-paths (component)
-                  (if (typep component 'asdf:source-file)
-                      (list (namestring
-                             (truename (asdf:component-pathname component))))
-                      (mapcan #'source-component-paths
-                              (asdf:component-children component))))
-
-                (let* ((root (truename (uiop:getenv "PROJECT_ROOT")))
-                       (test-root (truename (merge-pathnames "t/" root)))
-                       (asd-files (remove-if-not
-                                   (lambda (pathname)
-                                     (string-equal (or (pathname-type pathname) "") "asd"))
-                                   (tree-files root)))
-                       (test-files (remove-if-not #'test-lisp-file-p
-                                                  (tree-files test-root))))
-                  (unless test-files
-                    (error "No test files found under t/"))
-                  (dolist (asd-file asd-files)
-                    (asdf:load-asd asd-file))
-                  (let* ((asd-paths (mapcar (lambda (pathname)
-                                              (namestring (truename pathname)))
-                                            asd-files))
-                         (test-systems
-                           (remove-if-not
-                            (lambda (system)
-                              (let ((name (asdf:component-name system))
-                                    (source-file (asdf:system-source-file system)))
-                                (and source-file
-                                     (uiop:string-suffix-p name "/test")
-                                     (member
-                                      (namestring
-                                       (truename source-file))
-                                      asd-paths
-                                      :test #'string=))))
-                            (mapcar #'asdf:find-system (asdf:registered-systems))))
-                         (selected-paths
-                           (mapcar (lambda (pathname)
-                                     (namestring (truename pathname)))
-                                   test-files))
-                         (component-paths
-                           (remove-duplicates
-                            (mapcan #'source-component-paths test-systems)
-                            :test #'string=))
-                         (matched-paths (intersection selected-paths component-paths
-                                                     :test #'string=))
-                         (orphans (set-difference selected-paths component-paths
-                                                  :test #'string=)))
-                    (format t "Selected test files: ~d~%" (length selected-paths))
-                    (format t "Matched test file components: ~d~%" (length matched-paths))
-                    (dolist (orphan orphans)
-                      (format *error-output* "Orphan test file: ~a~%" orphan))
-                    (when orphans
-                      (error "Found ~d orphan test file(s)" (length orphans)))))
-                LISP
                 touch "$out/passed"
               '';
 
