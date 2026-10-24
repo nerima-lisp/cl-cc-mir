@@ -58,6 +58,7 @@
   :components ((:module "ir"
                 :serial t
                 :components ((:file "package")
+                             (:file "mir-rpo-test")
                              (:file "mir-boundary-test"))))
   :perform (asdf:test-op (op system)
              (declare (ignore op))
