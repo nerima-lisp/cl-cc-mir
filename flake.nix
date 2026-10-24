@@ -18,7 +18,7 @@
     };
 
     cl-nix-forge = {
-      url = "github:nerima-lisp/cl-nix-forge/v0.7.1";
+      url = "github:nerima-lisp/cl-nix-forge/v0.7.2";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
