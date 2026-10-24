@@ -1,17 +1,14 @@
 ;;;; cl-cc-mir.asd — independent ASDF systems for Machine IR + target descriptors
 ;;;;
-;;;; This file defines the Machine IR system. Target descriptors share this
-;;;; repository but have their own cl-cc-target.asd entry point, so ASDF can
-;;;; locate both primary system names conventionally.
+;;;; This system exposes the cl-cc/mir compatibility facade over the ir
+;;;; feature. Target descriptions have their own cl-cc-target.asd entry point.
 ;;;;
-;;;;   cl-cc-mir        — the :cl-cc/mir package (mir-value, mir-const,
-;;;;                       mir-inst, mir-block, mir-function, mir-module, SSA
-;;;;                       variable tracking, RPO, dominators, printer).
+;;;;   cl-cc-mir        — cl-cc/mir compatibility facade for cl-cc/mir/ir.
 ;;;; Both system families remain pure :cl leaf systems, depending on nothing
 ;;;; (including each other), mirroring cl-cc-ir.
 
 (asdf:defsystem :cl-cc-mir
-  :description "Machine IR: SSA CFG, dominators, phi nodes, target descriptors"
+  :description "Machine IR: SSA CFG, builders, and analyses"
   :author "takeokunn <bararararatty@gmail.com>"
   :maintainer "takeokunn <bararararatty@gmail.com>"
   :license "MIT"
@@ -23,10 +20,13 @@
   :pathname "src"
   :serial t
   :components
-  ((:file "package")
-   (:file "mir")
-   (:file "mir-builder")
-   (:file "mir-analysis"))
+  ((:module "ir"
+    :serial t
+    :components ((:file "package")
+                 (:file "mir")
+                 (:file "mir-builder")
+                 (:file "mir-analysis")))
+   (:file "package"))
   :in-order-to ((asdf:test-op (asdf:load-op "cl-cc-mir/test")))
   :perform (asdf:test-op (op system)
              (declare (ignore op system))
@@ -55,8 +55,10 @@
   :depends-on ("cl-cc-mir" "cl-weave")
   :pathname "t"
   :serial t
-  :components ((:file "package")
-               (:file "mir-boundary-test"))
+  :components ((:module "ir"
+                :serial t
+                :components ((:file "package")
+                             (:file "mir-boundary-test"))))
   :perform (asdf:test-op (op system)
              (declare (ignore op))
              (let ((results

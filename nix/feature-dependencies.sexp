@@ -1,0 +1,14 @@
+((:feature "ir"
+  :source-dirs ("src/ir")
+  :test-dir "t/ir"
+  :facade-packages ("cl-cc/mir")
+  :domain-package "cl-cc/mir/ir"
+  :infra-package nil
+  :depends-on ())
+ (:feature "target"
+  :source-dirs ("src/target")
+  :test-dir "t/target"
+  :facade-packages ("cl-cc/target")
+  :domain-package "cl-cc/mir/target"
+  :infra-package nil
+  :depends-on ()))

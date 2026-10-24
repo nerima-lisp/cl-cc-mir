@@ -1,4 +1,4 @@
-;;;; packages/mir/src/mir-analysis.lisp — MIR Analysis and Printing
+;;;; src/ir/mir-analysis.lisp — MIR Analysis and Printing
 ;;;;
 ;;;; Contains:
 ;;;;   mir-rpo — reverse post-order traversal
@@ -11,7 +11,7 @@
 ;;;;
 ;;;; Load order: after mir.lisp.
 
-(in-package :cl-cc/mir)
+(in-package :cl-cc/mir/ir)
 
 (defun %mir-rpo-dfs (blk visited result-cell)
   "Post-order DFS: push BLK into (car RESULT-CELL) after visiting successors."

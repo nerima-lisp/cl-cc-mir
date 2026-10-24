@@ -1,4 +1,4 @@
-;;;; packages/mir/src/mir-builder.lisp — MIR Builder API and SSA Variable Tracking
+;;;; src/ir/mir-builder.lisp — MIR Builder API and SSA Variable Tracking
 ;;;
 ;;; Extracted from mir.lisp.
 ;;; Contains:
@@ -12,7 +12,7 @@
 ;;;   make-mir-function/make-mir-inst constructors).
 ;;; Load order: immediately after mir.lisp.
 
-(in-package :cl-cc/mir)
+(in-package :cl-cc/mir/ir)
 
 ;;;; ────────────────────────────────────────────────────────────────────────
 ;;;; Builder API — Allocating Values and Blocks

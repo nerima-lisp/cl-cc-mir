@@ -1,7 +1,7 @@
 ;;;; cl-cc-target.asd -- ASDF entry point for target descriptors.
 
 (asdf:defsystem :cl-cc-target
-  :description "Target descriptors (target-desc API; absorbs calling-convention.lisp callers in Phase 3)"
+  :description "Target descriptions for compiler backends"
   :author "takeokunn <bararararatty@gmail.com>"
   :maintainer "takeokunn <bararararatty@gmail.com>"
   :license "MIT"
@@ -13,8 +13,11 @@
   :pathname "src"
   :serial t
   :components
-  ((:file "target-package")
-   (:file "target"))
+  ((:module "target"
+    :serial t
+    :components ((:file "package")
+                 (:file "target")))
+   (:file "target-package"))
   :in-order-to ((asdf:test-op (asdf:load-op "cl-cc-target/test")))
   :perform (asdf:test-op (op system)
              (declare (ignore op system))
@@ -43,8 +46,10 @@
   :depends-on ("cl-cc-target" "cl-weave")
   :pathname "t"
   :serial t
-  :components ((:file "target-package")
-               (:file "target-boundary-test"))
+  :components ((:module "target"
+                :serial t
+                :components ((:file "package")
+                             (:file "target-boundary-test"))))
   :perform (asdf:test-op (op system)
              (declare (ignore op))
              (let ((results

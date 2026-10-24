@@ -1,4 +1,4 @@
-;;;; packages/mir/src/mir.lisp — MIR: Target-Neutral SSA Intermediate Representation
+;;;; src/ir/mir.lisp — MIR: Target-Neutral SSA Intermediate Representation
 ;;;
 ;;; Three-stage pipeline:
 ;;;   VM Instructions → [Stage 1: lower.lisp] →
@@ -13,7 +13,7 @@
 ;;;   - mir-safepoint carries GC root metadata (frontend-managed, per Cranelift 2024)
 ;;;   - mir-tail-call is first-class, lowered per target
 
-(in-package :cl-cc/mir)
+(in-package :cl-cc/mir/ir)
 
 ;;;; ────────────────────────────────────────────────────────────────────────
 ;;;; MIR Value (SSA Virtual Register)
