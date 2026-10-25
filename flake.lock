@@ -8,16 +8,16 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1792878094,
-        "narHash": "sha256-ALA/1gbBsT3Yf5R4lOChJ3QZdykxvWum44/RVZnDpLQ=",
+        "lastModified": 1792902240,
+        "narHash": "sha256-3VOQIXW+ZL/m6A7rWcCauLWsG40wSy9nFexAH7+ub4U=",
         "owner": "nerima-lisp",
         "repo": "cl-nix-forge",
-        "rev": "0b15260dd868e0b75633a9cd3a99f6216b60df99",
+        "rev": "70a97ae8f1f0cdc22dd65b26c686647ec3aa9431",
         "type": "github"
       },
       "original": {
         "owner": "nerima-lisp",
-        "ref": "v0.7.2",
+        "ref": "v0.7.3",
         "repo": "cl-nix-forge",
         "type": "github"
       }
